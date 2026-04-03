@@ -4,7 +4,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import random
-sf = Stockfish('/home/linuxbrew/.linuxbrew/bin/stockfish')
+
+with open(r"stockfishdir.txt",encoding="utf-8") as file:
+    dir = file.readline()
+
+sf = Stockfish(dir)
 
 start = [
     [0,0,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,0,1,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0,0,0,0],
