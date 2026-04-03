@@ -37,19 +37,18 @@ model = nn.Sequential(
     nn.ReLU(),
     nn.Linear(96, 48),
     nn.ReLU(),
-    nn.Linear(48, 32),
+    nn.Linear(48, 32)
 )
 
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
-
 for epoch in range(100):
     inputs = "placeholder"
     targets = "placeholder"
 
-    outputs = model(input)
+    outputs = model(inputs)
     loss = criterion(outputs, targets)
 
     optimizer.zero_grad()
