@@ -1,3 +1,57 @@
 import matplotlib.pyplot as plt
 import stockfish
 import torch
+import torch.nn as nn
+import torch.optim as optim
+
+if torch.cuda.is_available():
+    print(f"GPU: {torch.cuda.get_device_name(0)}")
+    device = torch.device("cuda")
+else:
+    print("CPU")
+    device = torch.device("cpu")
+
+print(f"Device: {device}")
+
+
+model = nn.Sequential(
+    nn.Linear(768, 1536),
+    nn.ReLU(),
+    nn.Linear(1536, 1536),
+    nn.ReLU(),
+    nn.Linear(1536, 1536),
+    nn.ReLU(),
+    nn.Linear(1536, 1536),
+    nn.ReLU(),
+    nn.Linear(1536, 768),
+    nn.ReLU(),
+    nn.Linear(768, 768),
+    nn.ReLU(),
+    nn.Linear(768, 768),
+    nn.ReLU(),
+    nn.Linear(768, 384),
+    nn.ReLU(),
+    nn.Linear(384, 192),
+    nn.ReLU(),
+    nn.Linear(192, 96),
+    nn.ReLU(),
+    nn.Linear(96, 48),
+    nn.ReLU(),
+    nn.Linear(48, 32),
+)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+
+
+for epoch in range(100):
+    inputs = "placeholder"
+    targets = "placeholder"
+
+    outputs = model(input)
+    loss = criterion(outputs, targets)
+
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
