@@ -18,8 +18,23 @@ start = [
     [0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0,0,0,0],[0,0,0,0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,1,0,0,0,0],[0,0,0,0,0,0,0,0,0,1,0,0],
+    [0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0,0,0,0],[0,0,0,0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,1,0,0,0,0],[0,0,0,0,0,0,0,0,0,1,0,0]
 ]
+
+class Piece:
+    Empty: list = [0,0,0,0,0,0,0,0,0,0,0,0]
+    WhitePawn: list = [1,0,0,0,0,0,0,0,0,0,0,0]
+    WhiteKnight: list = [0,1,0,0,0,0,0,0,0,0,0,0]
+    WhiteBishop: list = [0,0,1,0,0,0,0,0,0,0,0,0]
+    WhiteRook: list = [0,0,0,1,0,0,0,0,0,0,0,0]
+    WhiteQueen: list = [0,0,0,0,1,0,0,0,0,0,0,0]
+    WhiteKing: list = [0,0,0,0,0,1,0,0,0,0,0,0]
+    BlackPawn: list = [0,0,0,0,0,0,1,0,0,0,0]
+    BlackKnight: list = [0,0,0,0,0,0,0,1,0,0,0,0]
+    BlackBishop: list = [0,0,0,0,0,0,0,0,1,0,0,0]
+    BlackRook: list = [0,0,0,0,0,0,0,0,0,1,0,0]
+    BlackQueen: list = [0,0,0,0,0,0,0,0,0,0,1,0]
+    BlackKing: list = [0,0,0,0,0,0,0,0,0,0,0,1]
 
 if torch.cuda.is_available():
     print(f"GPU: {torch.cuda.get_device_name(0)}")
@@ -80,65 +95,109 @@ def getNumber(x: str, y: str) -> int: #turns ex: 'e2' into 11 so can be used lik
             return c + 6
         case "h":
             return c + 7
+        case _:
+            return 64
 
 
 def makeMove(move: str, curr: list) -> list:
+    global enPass
     x = list(move)
     try: #in case of promotion
-        if curr[getNumber(x[0],x[1])] == [1,0,0,0,0,0,0,0,0,0,0,0]:
+        if curr[getNumber(x[0],x[1])] == Piece.WhitePawn:
             match x[4]:
                 case 'q':
-                    curr[getNumber(x[2], x[3])] = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+                    curr[getNumber(x[2], x[3])] = Piece.WhiteQueen
                 case 'r':
-                    curr[getNumber(x[2], x[3])] = [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+                    curr[getNumber(x[2], x[3])] = Piece.WhiteRook
                 case 'b':
-                    curr[getNumber(x[2], x[3])] = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    curr[getNumber(x[2], x[3])] = Piece.WhiteBishop
                 case 'n':
-                    curr[getNumber(x[2], x[3])] = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    curr[getNumber(x[2], x[3])] = Piece.WhiteKnight
         else:
             match x[4]:
                 case 'q':
-                    curr[getNumber(x[2], x[3])] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]
+                    curr[getNumber(x[2], x[3])] = Piece.BlackQueen
                 case 'r':
-                    curr[getNumber(x[2], x[3])] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]
+                    curr[getNumber(x[2], x[3])] = Piece.BlackRook
                 case 'b':
-                    curr[getNumber(x[2], x[3])] = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
+                    curr[getNumber(x[2], x[3])] = Piece.BlackBishop
                 case 'n':
-                    curr[getNumber(x[2], x[3])] = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+                    curr[getNumber(x[2], x[3])] = Piece.BlackKnight
     except:
         match move: #castling
             case 'e1g1':
-                if curr[getNumber(x[0], x[1])] == [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]:
-                    curr[5] = [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    curr[7] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                if curr[getNumber(x[0], x[1])] == Piece.WhiteKing:
+                    curr[5] = Piece.WhiteRook
+                    curr[7] = Piece.Empty
             case 'e1c1':
-                if curr[getNumber(x[0], x[1])] == [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]:
-                    curr[3] = [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    curr[0] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                if curr[getNumber(x[0], x[1])] == Piece.WhiteKing:
+                    curr[3] = Piece.WhiteRook
+                    curr[0] = Piece.Empty
             case 'e8g8':
-                if curr[getNumber(x[0], x[1])] == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]:
-                    curr[61] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
-                    curr[63] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                if curr[getNumber(x[0], x[1])] == Piece.BlackKing:
+                    curr[61] = Piece.BlackRook
+                    curr[63] = Piece.Empty
             case 'e8c8':
-                if curr[getNumber(x[0], x[1])] == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]:
-                    curr[58] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
-                    curr[56] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                if curr[getNumber(x[0], x[1])] == Piece.BlackKing:
+                    curr[58] = Piece.BlackRook
+                    curr[56] = Piece.Empty
+        if x[1] == '2' and x[3] == '4' and curr[getNumber(x[0], x[1])] == Piece.WhitePawn: #enpassant
+            enPass = [x[0],'3']
+        if x[1] == '7' and x[3] == '5' and curr[getNumber(x[0], x[1])] == Piece.BlackPawn:
+            enPass = [x[0], '6']
+        if enPass == [x[2],x[3]]:
+            if curr[getNumber(x[0], x[1])] == Piece.WhitePawn and x[3] == '6':
+                curr[getNumber(x[2],'6')] = Piece.Empty
+            if curr[getNumber(x[0], x[1])] == Piece.BlackPawn and x[3] == '3':
+                curr[getNumber(x[2],'3')] = Piece.Empty
         curr[getNumber(x[2], x[3])] = curr[getNumber(x[0], x[1])]
-    curr[getNumber(x[0], x[1])] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    curr[getNumber(x[0], x[1])] = Piece.Empty
+    return curr
+
+def makeLetter(x: int) -> str:
+    match str(x):
+        case 0:
+            return 'a'
+        case 1:
+            return 'b'
+        case 2:
+            return 'c'
+        case 3:
+            return 'd'
+        case 4:
+            return 'e'
+        case 5:
+            return 'f'
+        case 6:
+            return 'g'
+        case 7:
+            return 'h'
+        case _:
+            return 'null'
+
+def aiOutNotation(x1: list, x2: list, y1: list, y2: list, prom: list, curr: list) -> str:
+    cx1 = makeLetter(x1.index(1))
+    cx2 = makeLetter(x2.index(1))
+    cy1 = str(y1.index(1) + 1)
+    cy2 = str(y2.index(1) + 1)
+    out = cx1 + cy1 + cx2 + cy2
+    if cy1 == '7' and cy2 == '8' or cy1 == '2' and cy2 == '1':
+        if curr[getNumber(cx1,cy1)] == Piece.WhitePawn:
+            match prom:
+                case [1, 0, 0, 0]:
+                    out = out + 'q'
+                case [0, 1, 0, 0]:
+                    out = out + 'r'
+                case [0, 0, 1, 0]:
+                    out = out + 'b'
+                case [0, 0, 0, 1]:
+                    out = out + 'n'
 
 
 
 
-loss = True
+
 for epoch in range(100):
-    if loss:
-        loss = False
-        turn = bool(random.getrandbits(1))
-        current = start
-        sf.make_moves_from_start()
-        if turn:
-            stockMove = sf.get_best_move(wtime=1000,btime=1000)
-            current = makeMove(stockMove, current)
 
     inputs = "placeholder"
     targets = "placeholder"
