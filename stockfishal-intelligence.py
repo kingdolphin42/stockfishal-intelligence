@@ -231,7 +231,7 @@ try:
     checkpoint = torch.load(f"checkpoint(epoch: 0).pth")
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    epoch = checkpoint['epoch']
+    cepoch = checkpoint['epoch']
     loss = checkpoint['loss']
 
     model.train()
@@ -260,15 +260,15 @@ for epoch in range(100):
         optimizer.step()
         lossdat.append(loss.item())
         steps.append(step)
-    if epoch % 20 == 0:
+    if cepoch % 20 == 0:
         checkpoint = {
-            "epoch": epoch,
+            "epoch": cepoch,
             "model_state_dict": model.state_dict(),
             "optimizer_state_dict": optimizer.state_dict(),
             "loss": loss
         }
-        torch.save(checkpoint, f'checkpoint(epoch: {epoch}).pth')
-    cepoch = epoch
+        torch.save(checkpoint, f'checkpoint(epoch: {cepoch}).pth')
+    cepoch += 1
 
 checkpoint = {
     "epoch": cepoch,
