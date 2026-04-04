@@ -306,6 +306,8 @@ for epoch in range(100):
         optimizer.step()
         lossdat.append(loss.item())
         steps.append(step)
+        print(f"loss: {loss.item()}, step: {step}")
+
     if cepoch % 20 == 0:
         checkpoint = {
             "epoch": cepoch,
