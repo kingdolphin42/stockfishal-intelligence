@@ -278,7 +278,7 @@ checkpoint = {
 }
 torch.save(checkpoint, f'checkpoint(epoch: {cepoch}).pth')
 
-plt.plot(step, lossdat)
+plt.plot(steps, lossdat)
 plt.title("Neural Net Loss")
 plt.ylabel("Loss")
 plt.xlabel("Step")
