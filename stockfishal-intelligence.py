@@ -5,10 +5,9 @@ import torch.nn as nn
 import torch.optim as optim
 import random
 
-with open(r"stockfishdir.txt",encoding="utf-8") as file:
+with open(r"stockfishdir.txt", "r",encoding="utf-8") as file:
     stockDir = file.readline()
-
-sf = Stockfish(path=r'/home/linuxbrew/.linuxbrew/bin/stockfish',depth=18)
+sf = Stockfish(path=stockDir,depth=18)
 #I'm not sure why but your code isn't working.
 
 start = [
