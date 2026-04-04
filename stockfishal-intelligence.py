@@ -69,7 +69,7 @@ model = nn.Sequential(
     nn.ReLU(),
     nn.Linear(96, 48),
     nn.ReLU(),
-    nn.Linear(48, 32)
+    nn.Linear(48, 36)
 )
 
 criterion = nn.CrossEntropyLoss()
@@ -155,7 +155,7 @@ def makeMove(move: str, curr: list) -> list:
     return curr
 
 def makeLetter(x: int) -> str:
-    match str(x):
+    match x:
         case 0:
             return 'a'
         case 1:
@@ -175,6 +175,28 @@ def makeLetter(x: int) -> str:
         case _:
             return 'null'
 
+def makeNumber(x: str) -> int:
+    match x:
+        case 'a':
+            return 0
+        case 'b':
+            return 1
+        case 'c':
+            return 2
+        case 'd':
+            return 3
+        case 'e':
+            return 4
+        case 'f':
+            return 5
+        case 'g':
+            return 6
+        case 'h':
+            return 7
+        case _:
+            return 8
+
+
 def aiOutNotation(x1: list, x2: list, y1: list, y2: list, prom: list, curr: list) -> str:
     cx1 = makeLetter(x1.index(1))
     cx2 = makeLetter(x2.index(1))
@@ -192,22 +214,30 @@ def aiOutNotation(x1: list, x2: list, y1: list, y2: list, prom: list, curr: list
                     out = out + 'b'
                 case [0, 0, 0, 1]:
                     out = out + 'n'
+    return out
 
-
-
-
+def getTargetList(x: str) -> list:
+    x = list(x)
 
 for epoch in range(100):
+    current = start
+    while True:
+        try:
+            targets = sf.get_best_move(wtime=1000,btime=1000)
+        except:
+            break
+        if targets is None:
+            break
+        inputs = []
+        for i in current:
+            inputs.extend(i)
+        inputs = torch.Tensor(inputs)
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
 
-    inputs = "placeholder"
-    targets = "placeholder"
-
-    outputs = model(inputs)
-    loss = criterion(outputs, targets)
-
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
 
 
