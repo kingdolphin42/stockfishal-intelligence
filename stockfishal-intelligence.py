@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import random
+import matplotlib.pyplot as plt
 
 with open(r"stockfishdir.txt", "r",encoding="utf-8") as file:
     stockDir = file.readline()
@@ -219,9 +220,28 @@ def aiOutNotation(x1: list, x2: list, y1: list, y2: list, prom: list, curr: list
 def getTargetList(x: str) -> list:
     x = list(x)
 
+
+lossdat = []
+steps = []
+step = 0
+loss = 5
+cepoch = 0
+
+try:
+    checkpoint = torch.load(f"checkpoint(epoch: 0).pth")
+    model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    epoch = checkpoint['epoch']
+    loss = checkpoint['loss']
+
+    model.train()
+except:
+    print("Fail to load model, starting from start")
+
 for epoch in range(100):
     current = start
     while True:
+        step += 1
         try:
             targets = sf.get_best_move(wtime=1000,btime=1000)
         except:
@@ -238,6 +258,28 @@ for epoch in range(100):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        lossdat.append(loss.item())
+        steps.append(step)
+    if epoch % 20 == 0:
+        checkpoint = {
+            "epoch": epoch,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "loss": loss
+        }
+        torch.save(checkpoint, f'checkpoint(epoch: {epoch}).pth')
+    cepoch = epoch
 
+checkpoint = {
+    "epoch": cepoch,
+    "model_state_dict": model.state_dict(),
+    "optimizer_state_dict": optimizer.state_dict(),
+    "loss": loss
+}
+torch.save(checkpoint, f'checkpoint(epoch: {cepoch}).pth')
 
-
+plt.plot(step, lossdat)
+plt.title("Neural Net Loss")
+plt.ylabel("Loss")
+plt.xlabel("Step")
+plt.show()
