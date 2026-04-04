@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 with open(r"stockfishdir.txt", "r",encoding="utf-8") as file:
     stockDir = file.readline()
-sf = Stockfish(path=stockDir,depth=18)
+sf = Stockfish(path='/home/linuxbrew/.linuxbrew/bin/stockfish',depth=18)
 #I'm not sure why but your code isn't working.
 
 start = [
@@ -219,6 +219,30 @@ def aiOutNotation(x1: list, x2: list, y1: list, y2: list, prom: list, curr: list
 
 def getTargetList(x: str) -> list:
     x = list(x)
+    x[0] = str(makeNumber(x[0]))
+    x[1] = str(makeNumber(x[1]))
+    x[2] = str(int(x[2]) - 1)
+    x[3] = str(int(x[3]) - 1)
+    y = []
+    for i in range(0,3):
+        for j in range(0,7):
+            if x[i] == str(j):
+                y.append(1)
+            else:
+                y.append(0)
+    try:
+        match x[4]:
+            case 'q':
+                y.extend([1, 0, 0, 0])
+            case 'r':
+                y.extend([0, 1, 0, 0])
+            case 'b':
+                y.extend([0, 0, 1, 0])
+            case 'n':
+                y.extend([0, 0, 0, 1])
+    except:
+        y.extend([0, 0, 0, 0])
+    return y
 
 
 lossdat = []
@@ -243,11 +267,33 @@ for epoch in range(100):
     while True:
         step += 1
         try:
+            x1 = []
+            x2 = []
+            y1 = []
+            y2 = []
+            prom = []
+            out = outputs.tolist()
+            for i in out:
+                if i < 8:
+                    x1.append(i)
+                elif i < 16:
+                    x2.append(i)
+                elif i < 24:
+                    y1.append(i)
+                elif i < 32:
+                    y2.append(i)
+                else:
+                    prom.append(i)
+            sf.make_moves_from_current_position(aiOutNotation(x1, x2, y1, y2, prom, current))
+            print(aiOutNotation(x1, x2, y1, y2, prom, current))
             targets = sf.get_best_move(wtime=1000,btime=1000)
         except:
+            sf.get_board_visual()
             break
         if targets is None:
+            sf.get_board_visual()
             break
+        targets = torch.Tensor(getTargetList(targets))
         inputs = []
         for i in current:
             inputs.extend(i)
