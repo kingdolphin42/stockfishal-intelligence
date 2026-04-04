@@ -252,7 +252,7 @@ loss = 5
 cepoch = 0
 
 try:
-    checkpoint = torch.load(f"checkpoint(epoch: 0).pth")
+    checkpoint = torch.load(f"checkpoint(epoch: 200).pth")
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     cepoch = checkpoint['epoch']
@@ -263,8 +263,9 @@ except:
     print("Fail to load model, starting from start")
 
 for epoch in range(100):
+    playing = True
     current = start
-    while True:
+    while playing:
         step += 1
         try:
             x1 = []
@@ -289,10 +290,12 @@ for epoch in range(100):
             targets = sf.get_best_move(wtime=1000,btime=1000)
         except:
             sf.get_board_visual()
-            break
+            targets = None
+            playing = False
         if targets is None:
             sf.get_board_visual()
-            break
+            playing = False
+            targets = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         targets = torch.Tensor(getTargetList(targets))
         inputs = []
         for i in current:
