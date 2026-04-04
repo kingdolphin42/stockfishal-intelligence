@@ -6,9 +6,10 @@ import torch.optim as optim
 import random
 
 with open(r"stockfishdir.txt",encoding="utf-8") as file:
-    dir = file.readline()
+    stockDir = file.readline()
 
-sf = Stockfish(dir)
+sf = Stockfish(path=r'/home/linuxbrew/.linuxbrew/bin/stockfish',depth=18)
+#I'm not sure why but your code isn't working.
 
 start = [
     [0,0,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,0,1,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0,0,0,0],
